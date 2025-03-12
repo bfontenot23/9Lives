@@ -187,7 +187,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  jumpForce: 5
+  jumpForce: 7
   checkDistance: 0.5
   animator: {fileID: 3406953901102459984}
   spriteRenderer: {fileID: 9140181555670179138}
