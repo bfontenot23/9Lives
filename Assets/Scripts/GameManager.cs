@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,23 +15,15 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    // List to store input recordings from each run.
     public List<List<PlayerInputRecorder.InputFrame>> pastRuns = new List<List<PlayerInputRecorder.InputFrame>>();
-
-    // Reference to a ghost prefab that has a GhostController component.
     public GameObject ghostPrefab;
-    // Reference to a player prefab.
     public GameObject playerPrefab;
-    // Transform that represents the spawn point for ghosts and the player.
     public Transform spawnPoint;
-    // Radius to check if the spawn area is clear.
     public float spawnAreaRadius = 0f;
-
     public bool gameIsPaused = false;
-
     public int loops = 0;
-
     public bool playerControlsEnabled = true;
+
 
     void Awake()
     {
@@ -83,20 +76,18 @@ public class GameManager : MonoBehaviour
 
     IEnumerator SpawnEntities()
     {
-        // Spawn ghosts, each only if the spawn area is clear.
         foreach (var run in pastRuns)
         {
+            if(run != pastRuns.First()) yield return new WaitForSeconds(1f);
             yield return StartCoroutine(WaitForSpawnAreaClear());
             GameObject ghost = Instantiate(ghostPrefab, spawnPoint.position, spawnPoint.rotation);
             GhostController ghostController = ghost.GetComponent<GhostController>();
             ghostController.playbackInputs = run;
-            yield return new WaitForSeconds(1f);
         }
 
         // Wait until the spawn area is clear before spawning the player.
+        if(pastRuns.Count != 0) yield return new WaitForSeconds(1f);
         yield return StartCoroutine(WaitForSpawnAreaClear());
-        // Optionally, wait 1 second after the last ghost if there were any.
-        yield return new WaitForSeconds(1f);
         Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
     }
 
