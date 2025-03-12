@@ -5,6 +5,8 @@ public class MainMenuScript : MonoBehaviour
 {
     public GameObject mainMenuUI;
     public GameObject levelSelectUI;
+    public GameObject normalMenu;
+    public GameObject resetConfirm;
 
     public void Play()
     {
@@ -21,6 +23,25 @@ public class MainMenuScript : MonoBehaviour
     {
         levelSelectUI.SetActive(false);
         mainMenuUI.SetActive(true);
+    }
+
+    public void Reset()
+    {
+        normalMenu.SetActive(false);
+        resetConfirm.SetActive(true);
+    }
+
+    public void ConfirmReset()
+    {
+        normalMenu.SetActive(true);
+        resetConfirm.SetActive(false);
+        PlayerPrefs.DeleteAll();
+    }
+
+    public void DenyReset()
+    {
+        normalMenu.SetActive(true);
+        resetConfirm.SetActive(false);
     }
 
     public void LoadLevel1()

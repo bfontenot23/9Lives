@@ -6,13 +6,15 @@ public class Door : MonoBehaviour, IPowerable
     private Vector3 startPos;
 
     public float doorMoveSpeed = 0.2f;
+    public float doorMoveDistance = 3f;
 
     public bool powered = false;
+    public bool shouldUnpower = true;
 
     void Start()
     {
         startPos = transform.position;
-        endPos = startPos + new Vector3(0, 3, 0);
+        endPos = startPos + new Vector3(0, doorMoveDistance, 0);
     }
 
     private void FixedUpdate()
@@ -40,7 +42,7 @@ public class Door : MonoBehaviour, IPowerable
 
     public void OnUnpower()
     {
-        powered = false;
+        if(shouldUnpower) powered = false;
     }
 
 
