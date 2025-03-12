@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,8 +24,13 @@ public class GameManager : MonoBehaviour
     // Transform that represents the spawn point for ghosts and the player.
     public Transform spawnPoint;
     // Radius to check if the spawn area is clear.
-    public float spawnAreaRadius = 1f;
+    public float spawnAreaRadius = 0f;
 
+    public bool gameIsPaused = false;
+
+    public int loops = 0;
+
+    public bool playerControlsEnabled = true;
 
     void Awake()
     {
@@ -97,13 +103,24 @@ public class GameManager : MonoBehaviour
     // Call this at the end of a run to store the current recording.
     public void AddRun(List<PlayerInputRecorder.InputFrame> runData)
     {
-        // Clone or copy the recording if necessary.
-        pastRuns.Add(new List<PlayerInputRecorder.InputFrame>(runData));
+        // Create a copy of the run data.
+        List<PlayerInputRecorder.InputFrame> runCopy = new List<PlayerInputRecorder.InputFrame>(runData);
+
+        // Append an extra frame with zero movement.
+        PlayerInputRecorder.InputFrame resetFrame = new PlayerInputRecorder.InputFrame();
+        // Set relativeTime to a little after the last frame.
+        resetFrame.relativeTime = runCopy.Count > 0 ? runCopy[runCopy.Count - 1].relativeTime + Time.fixedDeltaTime : 0f;
+        resetFrame.horizontal = 0f;
+        resetFrame.jump = false;
+        runCopy.Add(resetFrame);
+
+        pastRuns.Add(runCopy);
     }
 
     // Regular reset: reloads the level while keeping past runs.
     public void ResetLevel()
     {
+        loops = loops + 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -111,6 +128,10 @@ public class GameManager : MonoBehaviour
     public void HardResetLevel()
     {
         pastRuns.Clear();
+        Time.timeScale = 1f;
+        gameIsPaused = false;
+        playerControlsEnabled = true;
+        loops = 0;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

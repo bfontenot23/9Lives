@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     public float checkDistance = 1.0f;
     private bool jumpPressed = false;
 
-    [SerializeField] private Animator animator;
+    [SerializeField] private Animator playerAnimator;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlayerInputRecorder inputRecorder;
 
@@ -21,15 +21,15 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // Capture jump input in Update
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded() && GameManager.Instance != null && GameManager.Instance.playerControlsEnabled)
         {
             jumpPressed = true;
         }
 
-        animator.SetFloat("airvelo", rb.linearVelocityY);
+        playerAnimator.SetFloat("airvelo", rb.linearVelocityY);
         IsGrounded();
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && GameManager.Instance != null && GameManager.Instance.playerControlsEnabled)
         {
             if (GameManager.Instance != null && inputRecorder != null)
             {
@@ -43,24 +43,27 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        float move = Input.GetAxis("Horizontal");
-        if (move != 0)
+        if (GameManager.Instance != null && GameManager.Instance.playerControlsEnabled)
         {
-            animator.SetBool("moving", true);
-            spriteRenderer.flipX = move < 0;
-        }
-        else animator.SetBool("moving", false);
-        
-        Vector2 vel = rb.linearVelocity;
-        vel.x = move * speed;
-        rb.linearVelocity = vel;
+            float move = Input.GetAxis("Horizontal");
+            if (move != 0)
+            {
+                playerAnimator.SetBool("moving", true);
+                spriteRenderer.flipX = move < 0;
+            }
+            else playerAnimator.SetBool("moving", false);
 
-        if(jumpPressed)
-        {
-            vel = rb.linearVelocity;
-            vel.y = jumpForce;
+            Vector2 vel = rb.linearVelocity;
+            vel.x = move * speed;
             rb.linearVelocity = vel;
-            jumpPressed = false;
+
+            if (jumpPressed)
+            {
+                vel = rb.linearVelocity;
+                vel.y = jumpForce;
+                rb.linearVelocity = vel;
+                jumpPressed = false;
+            }
         }
     }
 
@@ -74,12 +77,12 @@ public class PlayerController : MonoBehaviour
                 !hit.collider.CompareTag("Player") &&
                 !hit.collider.CompareTag("Ghost"))
             {
-                animator.SetBool("airborne", false);
+                playerAnimator.SetBool("airborne", false);
                 return true;
             }
         }
 
-        animator.SetBool("airborne", true);
+        playerAnimator.SetBool("airborne", true);
         return false;
     }
 }

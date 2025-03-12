@@ -23,7 +23,7 @@ public class PlayerInputRecorder : MonoBehaviour
     void Update()
     {
         // Capture jump input in Update
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && GameManager.Instance != null && GameManager.Instance.playerControlsEnabled)
         {
             jumpPressed = true;
         }
@@ -34,13 +34,22 @@ public class PlayerInputRecorder : MonoBehaviour
         InputFrame frame = new InputFrame();
         // Record time relative to the start of this run.
         frame.relativeTime = Time.time - runStartTime;
-        frame.horizontal = Input.GetAxis("Horizontal");
-        if(jumpPressed)
+        if (GameManager.Instance != null && GameManager.Instance.playerControlsEnabled)
         {
-            frame.jump = true;
-            jumpPressed = false;
+            frame.horizontal = Input.GetAxis("Horizontal");
+            if (jumpPressed)
+            {
+                frame.jump = true;
+                jumpPressed = false;
+            }
+            else frame.jump = false;
         }
-        else frame.jump = false;
+        else
+        {
+            frame.horizontal = 0;
+            frame.jump = false;
+        }
+        
         recordedInputs.Add(frame);
     }
 }

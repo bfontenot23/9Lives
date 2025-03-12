@@ -91,7 +91,7 @@ MonoBehaviour:
   animator: {fileID: 5564449391713550077}
   spriteRenderer: {fileID: 2064752040086786031}
   speed: 5
-  jumpForce: 7
+  jumpForce: 10
   checkDistance: 0.5
 --- !u!212 &2064752040086786031 stripped
 SpriteRenderer:
