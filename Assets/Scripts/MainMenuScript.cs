@@ -46,21 +46,29 @@ public class MainMenuScript : MonoBehaviour
 
     public void LoadLevel1()
     {
+        BGM.Instance.ShutUp();
+        Destroy(BGM.Instance);
         SceneManager.LoadScene("Level1");
     }
 
     public void LoadLevel2()
     {
+        BGM.Instance.ShutUp();
+        Destroy(BGM.Instance);
         SceneManager.LoadScene("Level2");
     }
 
     public void LoadLevel3()
     {
+        BGM.Instance.ShutUp();
+        Destroy(BGM.Instance);
         SceneManager.LoadScene("Level3");
     }
 
     public void LoadLevel4()
     {
+        BGM.Instance.ShutUp();
+        Destroy(BGM.Instance);
         SceneManager.LoadScene("Level4");
     }
 }

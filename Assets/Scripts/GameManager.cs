@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
     public int loops = 0;
     public bool playerControlsEnabled = true;
 
+    private AudioSource resetSound;
+
 
     void Awake()
     {
@@ -32,6 +34,7 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
+            resetSound = gameObject.GetComponent<AudioSource>();
         }
         else
         {
@@ -43,7 +46,6 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
-
 
     // This is called every time a scene is loaded.
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -112,6 +114,7 @@ public class GameManager : MonoBehaviour
     public void ResetLevel()
     {
         loops = loops + 1;
+        resetSound.Play();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 

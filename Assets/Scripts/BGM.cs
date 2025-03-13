@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class SpawnPoint : MonoBehaviour
+public class BGM : MonoBehaviour
 {
-    public static SpawnPoint Instance;
+    public static BGM Instance;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -17,5 +17,11 @@ public class SpawnPoint : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void ShutUp()
+    {
+        AudioSource audio = gameObject.GetComponent<AudioSource>();
+        audio.Stop();
     }
 }

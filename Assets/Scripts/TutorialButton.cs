@@ -12,7 +12,7 @@ public class TutorialButton : MonoBehaviour
         if (GameManager.Instance != null && GameManager.Instance.loops == 0)
         {
             buttonPresses++;
-            if (buttonPresses == 6)
+            if (buttonPresses == 3)
             {
                 tutorialButton.Play();
             }

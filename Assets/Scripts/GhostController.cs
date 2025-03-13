@@ -16,10 +16,23 @@ public class GhostController : MonoBehaviour
     public float jumpForce = 5f;
     public float checkDistance = 1.0f;
 
+    private AudioSource footsteps;
+    private AudioSource jump;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         playbackStartTime = Time.time;
+        footsteps = GetComponent<AudioSource>();
+        jump = gameObject.transform.GetChild(0).GetComponent<AudioSource>();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            footsteps.Stop();
+        }
     }
 
     void FixedUpdate()
@@ -40,34 +53,48 @@ public class GhostController : MonoBehaviour
         // Get the current input frame.
         PlayerInputRecorder.InputFrame frame = playbackInputs[currentInputIndex];
 
-        // Update horizontal movement.
-        Vector2 vel = rb.linearVelocity;
-        vel.x = frame.horizontal * speed;
-        rb.linearVelocity = vel;
-
-        // Update animation parameters for moving and sprite direction.
-        if (Mathf.Abs(frame.horizontal) > 0.01f)
+        if (GameManager.Instance != null && GameManager.Instance.playerControlsEnabled)
         {
-            animator.SetBool("moving", true);
-            spriteRenderer.flipX = frame.horizontal < 0;
-        }
-        else
-        {
-            animator.SetBool("moving", false);
-        }
-
-        // Check if the ghost is grounded.
-        bool grounded = IsGrounded();
-        animator.SetBool("airborne", !grounded);
-        animator.SetFloat("airvelo", rb.linearVelocity.y);
-
-        // If the recorded input indicates a jump and we're grounded, simulate a jump.
-        if (frame.jump && grounded)
-        {
-            vel = rb.linearVelocity;
-            vel.y = jumpForce;
+            // Update horizontal movement.
+            Vector2 vel = rb.linearVelocity;
+            vel.x = frame.horizontal * speed;
             rb.linearVelocity = vel;
+
+            // Update animation parameters for moving and sprite direction.
+            if (Mathf.Abs(frame.horizontal) > 0.01f)
+            {
+                animator.SetBool("moving", true);
+                spriteRenderer.flipX = frame.horizontal < 0;
+                if (!footsteps.isPlaying && IsGrounded())
+                {
+                    footsteps.Play();
+                }
+            }
+            else
+            {
+                animator.SetBool("moving", false);
+                footsteps.Stop();
+            }
+            if (!IsGrounded())
+            {
+                footsteps.Stop();
+            }
+
+            // Check if the ghost is grounded.
+            bool grounded = IsGrounded();
+            animator.SetBool("airborne", !grounded);
+            animator.SetFloat("airvelo", rb.linearVelocity.y);
+
+            // If the recorded input indicates a jump and we're grounded, simulate a jump.
+            if (frame.jump && grounded)
+            {
+                vel = rb.linearVelocity;
+                vel.y = jumpForce;
+                rb.linearVelocity = vel;
+                jump.Play();
+            }
         }
+        else footsteps.Stop();
     }
 
     // A simple grounded check using raycasting that ignores colliders tagged "Player" and "Ghost".

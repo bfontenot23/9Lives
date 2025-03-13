@@ -10,11 +10,14 @@ public class Button : MonoBehaviour
 
     private bool isPressed = false;
 
+    private AudioSource press;
+
 
     void Start()
     {
         startPos = transform.position;
         endPos = startPos + new Vector3(0, -0.2f, 0);
+        press = gameObject.GetComponent<AudioSource>();
     }
 
     private void FixedUpdate()
@@ -33,6 +36,11 @@ public class Button : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, startPos, 1f * Time.deltaTime);
             }
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(!isPressed) press.Play();
     }
 
     private void OnTriggerStay2D(Collider2D collision)

@@ -12,10 +12,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlayerInputRecorder inputRecorder;
 
+    private AudioSource footsteps;
+    private AudioSource jump;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         inputRecorder = GetComponent<PlayerInputRecorder>();
+        footsteps = GetComponent<AudioSource>();
+        jump = gameObject.transform.GetChild(0).GetComponent<AudioSource>();
     }
 
     void Update()
@@ -31,14 +36,24 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R) && GameManager.Instance != null && GameManager.Instance.playerControlsEnabled)
         {
-            if (GameManager.Instance != null && inputRecorder != null)
-            {
-                // Save the current run's recorded inputs as a ghost run.
-                GameManager.Instance.AddRun(inputRecorder.recordedInputs);
-            }
-            // Reset the level (ghosts will be spawned as defined in GameManager).
-            GameManager.Instance.ResetLevel();
+            Reset();
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            footsteps.Stop();
+        }
+    }
+
+    public void Reset()
+    {
+        if (GameManager.Instance != null && inputRecorder != null)
+        {
+            // Save the current run's recorded inputs as a ghost run.
+            GameManager.Instance.AddRun(inputRecorder.recordedInputs);
+        }
+
+        GameManager.Instance.ResetLevel();
     }
 
     void FixedUpdate()
@@ -50,8 +65,22 @@ public class PlayerController : MonoBehaviour
             {
                 playerAnimator.SetBool("moving", true);
                 spriteRenderer.flipX = move < 0;
+                if (!footsteps.isPlaying && IsGrounded())
+                {
+                    footsteps.Play();
+                }
             }
-            else playerAnimator.SetBool("moving", false);
+            else
+            {
+                playerAnimator.SetBool("moving", false);
+                footsteps.Stop();
+            }
+            if (!IsGrounded()) 
+            {
+                footsteps.Stop();
+            }
+
+
 
             Vector2 vel = rb.linearVelocity;
             vel.x = move * speed;
@@ -63,8 +92,10 @@ public class PlayerController : MonoBehaviour
                 vel.y = jumpForce;
                 rb.linearVelocity = vel;
                 jumpPressed = false;
+                jump.Play();
             }
         }
+        else footsteps.Stop();
     }
 
     bool IsGrounded()

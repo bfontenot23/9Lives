@@ -16,6 +16,8 @@ public class WinScreen : MonoBehaviour
         Time.timeScale = 1f;
         Destroy(GameManager.Instance);
         Destroy(SpawnPoint.Instance);
+        BGM.Instance.ShutUp();
+        Destroy(BGM.Instance);
         SceneManager.LoadScene("MainMenu");
     }
 }
