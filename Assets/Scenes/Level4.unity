@@ -2310,7 +2310,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8756872213030032522, guid: 4787d00252f2e4ec4afc03b7593689b4, type: 3}
       propertyPath: m_text
-      value: Complete the level in 1 loops for 3 stars!
+      value: Complete the level in 1 loop for 3 stars!
       objectReference: {fileID: 0}
     - target: {fileID: 9167957760071752649, guid: 4787d00252f2e4ec4afc03b7593689b4, type: 3}
       propertyPath: m_AnchoredPosition.x
